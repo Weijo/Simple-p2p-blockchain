@@ -34,5 +34,5 @@ main.exe -h 192.168.1.2 -p 4444
 - Terminal 2
 ```shell
 go build main.go
-main.exe -h 192.168.1.3 -p 4445
+main.exe -h 192.168.1.3 -p 4445 192.168.1.2:4444
 ```
