@@ -483,11 +483,6 @@ func GobEncode(data interface{}) []byte {
 	return buff.Bytes()
 }
 
-/* AddNode checks KnownNodes and adds node into KnownNodes if it is not known. */
-func AddNode(ip string) {
-
-}
-
 /* NodeIsKnown checks the ip if it is in KnownNodes. */
 func NodeIsKnown(ip string) bool {
 	for _, node := range KnownNodes {
