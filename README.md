@@ -2,7 +2,7 @@
 Its so simple dude
 
 ## Features:
-- budget ass node discovery
+- budget node discovery
 - noisy ass prints
 - web server visualisation of blockchain
 - code stolen from everywhere
