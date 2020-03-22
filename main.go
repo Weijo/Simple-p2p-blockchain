@@ -437,6 +437,7 @@ func RequestChain() {
 	}
 }
 
+/* RequestCheck broadcasts CheckBlock requests to peers. */
 func RequestCheck(newBlock Block) {
 	for _, address := range KnownNodes {
 		if address != nodeAddress{
@@ -445,7 +446,7 @@ func RequestCheck(newBlock Block) {
 	}
 }
 
-/* CmdToBytes converts a command string into a byte array of commandLength */
+/* CmdToBytes converts a command string into a byte array of commandLength. */
 func CmdToBytes(cmd string) []byte {
 	var bytes [commandLength]byte
 
@@ -456,6 +457,7 @@ func CmdToBytes(cmd string) []byte {
 	return bytes[:]
 }
 
+/* BytesToCmd converts a byte array into a command string. */
 func BytesToCmd(bytes []byte) string {
 	var cmd []byte
 
