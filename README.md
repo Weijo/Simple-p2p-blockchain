@@ -1,7 +1,16 @@
 # Simple-p2p-blockchain
-its so simple dude
+Its so simple dude
 
-# Instructions:
+## Features:
+- budget ass node discovery
+- noisy ass prints
+- web server visualisation of blockchain
+- code stolen from everywhere
+- does not do cryptocurrency
+- every node is both miner and a fullnode
+- 100% self-praise worthy
+
+## Instructions:
 ##### Compile the go file and run it as such 
 Terminal 1
 ```shell
@@ -15,7 +24,7 @@ go build main.go
 main.exe -h <your internal ip> -p <a port of your choice> <terminal1 ip + port>
 ```
 
-# Example
+### Example
 - Terminal 1
 ```shell
 go build main.go
