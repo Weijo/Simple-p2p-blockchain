@@ -24,7 +24,6 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	"github.com/spf13/pflag"
 )
 
@@ -80,6 +79,7 @@ type CheckBlock struct {
 
 var (
 	nodeAddress   string
+	httpPort      int
 	KnownNodes    []string
 	Blockchain    []Block
 	mutex         = &sync.Mutex{}
@@ -88,13 +88,13 @@ var (
 	jsonflag      = false
 	broadcastflag = true
 	tmpls         = template.Must(template.ParseFiles("web/index.html"))
-	hostFlag      = pflag.StringP("host", "h", "localhost", "binding host")
+	hostFlag      = pflag.StringP("host", "h", GetOutboundIP(), "binding host")
 	portFlag      = pflag.IntP("port", "p", 4444, "binding port")
-	httpPortFlag  = pflag.IntP("webport", "w", loadenv(), "web server port")
+	httpPortFlag  = pflag.IntP("webport", "w", 8000, "web server port")
 )
 
 const (
-	targetBits    = 15 // difficulty setting
+	targetBits    = 18 // difficulty setting
 	printedLength = 8  // printedLength is the total prefix length of a public key associated to a chat users ID.
 	commandLength = 12
 	protocol      = "tcp"
@@ -140,7 +140,6 @@ func StartServer() {
 		os.Exit(1)
 	}
 
-	
 	ln, err := net.Listen(protocol, nodeAddress)
 	if err != nil {
 		log.Panic(err)
@@ -157,6 +156,19 @@ func StartServer() {
 		go HandleConnection(conn)
 
 	}
+}
+
+/* GetOutboundIP is to find ip of host for p2p discovery */
+func GetOutboundIP() string {
+    conn, err := net.Dial("udp", "8.8.8.8:80")
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer conn.Close()
+
+    localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+    return localAddr.IP.String()
 }
 
 /* HandleConnection is the main handler for any connection to the host */
@@ -437,7 +449,6 @@ func RequestChain() {
 	}
 }
 
-/* RequestCheck broadcasts CheckBlock requests to peers. */
 func RequestCheck(newBlock Block) {
 	for _, address := range KnownNodes {
 		if address != nodeAddress{
@@ -446,7 +457,7 @@ func RequestCheck(newBlock Block) {
 	}
 }
 
-/* CmdToBytes converts a command string into a byte array of commandLength. */
+/* CmdToBytes converts a command string into a byte array of commandLength */
 func CmdToBytes(cmd string) []byte {
 	var bytes [commandLength]byte
 
@@ -635,25 +646,15 @@ func IntToHex(num int64) []byte {
  * Web Server Functions *
  ************************/
 
-func loadenv() int {
-	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Check if http port from .env file is used
-	port, err := strconv.Atoi(os.Getenv("PORT"))
-
-	return port
-}
-
 /* run will set up a http server */
 func run() error {
+	pflag.Parse()
+
+	httpPort, _ = strconv.Atoi(fmt.Sprintf("%d", *httpPortFlag))
 	mux := makeMuxRouter()
-	log.Println(fmt.Sprintf("HTTP Server Listening on port :%d", *httpPortFlag))
+	log.Println(fmt.Sprintf("HTTP Server Listening on port :%d", httpPort))
 	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", *httpPortFlag),
+		Addr:           fmt.Sprintf(":%d", httpPort),
 		Handler:        mux,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
@@ -677,7 +678,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	}{
 		Title: "Blockchain Visualisation",
 		Data:  strings.ReplaceAll(string(bytes), "\n", ""),
-		Port:  strconv.Itoa(*httpPortFlag),
+		Port:  strconv.Itoa(httpPort),
 	}
 
 	if err := tmpls.ExecuteTemplate(w, "index.html", data); err != nil {

@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  run1:
+    build: .
+    tty: true
+    networks:
+    - "bc"
+  run2:
+    build: .
+    tty: true
+    networks:
+    - "bc"
+
+networks:
+  bc:
+    driver: bridge
