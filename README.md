@@ -1,14 +1,5 @@
 # Simple-p2p-blockchain
-Its so simple dude
-
-## Features:
-- budget node discovery
-- noisy ass prints
-- web server visualisation of blockchain
-- code stolen from everywhere
-- does not do cryptocurrency
-- every node is both miner and a fullnode
-- 100% self-praise worthy
+Peer-to-peer blockchain using golang
 
 ## Instructions:
 ##### Compile the go file and run it as such 
